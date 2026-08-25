@@ -1,0 +1,42 @@
+name: Python Syntax Check
+
+# Runs on every push and every pull request so a script with a
+# syntax error can't get merged silently. This does NOT test drone
+# behavior (that requires real hardware) - it only confirms every
+# .py file in the repo is valid, importable Python.
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  syntax-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Compile-check every Python file
+        run: |
+          echo "Checking syntax of all .py files in the repo..."
+          find . -name "*.py" -print0 | xargs -0 -n1 python -m py_compile
+          echo "All files compiled successfully."
+
+      - name: Confirm each mission script defines main()
+        run: |
+          echo "Checking that every missions/*.py file has a main() function..."
+          for f in missions/*.py; do
+            if ! grep -q "^def main(" "$f"; then
+              echo "FAIL: $f has no main() function"
+              exit 1
+            fi
+          done
+          echo "All mission scripts define main()."
