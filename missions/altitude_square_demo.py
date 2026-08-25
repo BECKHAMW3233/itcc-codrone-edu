@@ -60,11 +60,6 @@ PSEUDOCODE
 
 KNOWN LIMITATIONS
 -------------------
-  - No try/finally: if an exception occurs mid-flight (sensor error,
-    connection drop), the script will exit without calling
-    drone.land(), leaving the drone airborne. Club members extending
-    this script should wrap the flight logic in try/finally and call
-    drone.land() + drone.close() in the finally block.
   - No bounds checking - nothing stops CLIMB_THROTTLE or TARGET_CM
     from being set to unsafe values for the room you're flying in.
   - move_forward/backward/left/right() rely on the optical flow
@@ -78,6 +73,17 @@ KNOWN LIMITATIONS
     call, since the SDK's speed parameter is in m/s. Max SDK speed is
     2.0 m/s (200 cm/sec) - values above that will likely be clamped
     or rejected by the drone firmware.
+
+NEW TO PYTHON? READ THIS FIRST
+---------------------------------
+If terms like "function," "docstring," "tuple," or "try/finally"
+below aren't familiar yet, see
+docs/python-concepts-guide.md in this repo before reading the rest of
+this file - it explains those ideas in plain language with small
+examples, and this script will make a lot more sense afterward. The
+short version: start reading at main() near the bottom of this file -
+it lists out the mission step by step - then look up each function
+main() calls, one at a time.
 """
 
 from codrone_edu.drone import *
@@ -108,6 +114,14 @@ def climb_to(drone, target_cm):
     """
     Climb from the drone's current altitude to a target altitude.
 
+    IN PLAIN LANGUAGE: there's no built-in "fly up to exactly this
+    height" command in the drone's library. Instead, this function
+    turns the upward power (throttle) on, keeps checking the current
+    height sensor in a loop, and turns the throttle back off once the
+    drone is close enough to the target. Think of it like holding
+    down a bicycle pedal and checking your speedometer over and over
+    until you hit the speed you want, then letting go of the pedal.
+
     Pseudocode:
         read current height with get_height("cm")
         set throttle to CLIMB_THROTTLE (positive = climb)
@@ -118,15 +132,16 @@ def climb_to(drone, target_cm):
         set throttle back to 0 and call move() once to apply it
         hover in place for HOVER_SECONDS
 
-    Args:
+    Args (the information this function needs to run):
         drone: the connected Drone instance.
         target_cm (float): target altitude in cm, measured from the
             takeoff point (i.e. what get_height("cm") returns at 0
             throttle when sitting on the ground before takeoff).
 
-    Returns:
-        None. Leaves the drone hovering at approximately target_cm
-        (within CLIMB_TOLERANCE_CM).
+    Returns (what comes back out of this function):
+        None - meaning this function doesn't hand back a value, it
+        just does something (climbs the drone) and leaves it hovering
+        at approximately target_cm (within CLIMB_TOLERANCE_CM).
     """
     current_cm = drone.get_height("cm")
 
@@ -147,6 +162,12 @@ def fly_square(drone, side_cm, speed_ms, hover_seconds):
     Fly a 4-sided square pattern, hovering at every corner including
     the return to the starting point.
 
+    IN PLAIN LANGUAGE: this just calls four movement commands in a
+    row - left, forward, right, backward - with a pause (hover)
+    after each one. Because each side is the same length and each
+    turn is 90 degrees, the drone traces a square shape and ends up
+    back where it started.
+
     Pseudocode:
         hover at location 0 (current position, the start point)
         move left side_cm      -> now at location 1
@@ -162,7 +183,7 @@ def fly_square(drone, side_cm, speed_ms, hover_seconds):
     only begins once the preceding move has fully completed, so the
     printed "location" hovers reflect time spent stationary only.
 
-    Args:
+    Args (the information this function needs to run):
         drone: the connected Drone instance.
         side_cm (float): length of each side of the square, in cm.
         speed_ms (float): speed in m/s for each horizontal move
@@ -170,8 +191,9 @@ def fly_square(drone, side_cm, speed_ms, hover_seconds):
         hover_seconds (float): how long to hover at each of the 4
             corners (including the return to location 0).
 
-    Returns:
-        None. Leaves the drone hovering back at its starting
+    Returns (what comes back out of this function):
+        None - this function doesn't hand back a value, it just flies
+        the square and leaves the drone hovering back at its starting
         horizontal position, at whatever altitude it was already at.
     """
     # Location 0: starting point
@@ -206,15 +228,24 @@ def main():
     5-second hover at every step, a 30.48x30.48 cm square pattern
     flown at the 91.44 cm step, then landing.
 
+    The flight logic runs inside a try/finally block: if anything
+    raises an exception mid-flight (a sensor error, a dropped
+    connection, etc.), the finally block still calls drone.land()
+    and drone.close() so the drone doesn't get left airborne with no
+    landing command issued.
+
     Pseudocode:
         create Drone object and pair
         take off, hover 5 seconds
-        for each altitude step from 15.24cm up to 152.4cm, by 15.24cm:
-            climb to this step, hover 5 seconds
-            if this step is 91.44cm:
-                fly the square pattern (see fly_square())
-        land
-        close the connection
+        try:
+            for each altitude step from 15.24cm up to 152.4cm, by 15.24cm:
+                climb to this step, hover 5 seconds
+                if this step is 91.44cm:
+                    fly the square pattern (see fly_square())
+        finally:
+            land
+            close the connection
+            (runs even if an exception occurred above)
     """
     drone = Drone()
     drone.pair()
@@ -222,21 +253,24 @@ def main():
     drone.takeoff()
     drone.hover(HOVER_SECONDS)
 
-    for step_cm in altitude_steps_cm:
-        print(f"Climbing to {step_cm} cm...")
-        climb_to(drone, step_cm)
-        current_cm = drone.get_height("cm")
-        print(f"  Now at approx {current_cm:.2f} cm. Hovering {HOVER_SECONDS}s.")
+    try:
+        for step_cm in altitude_steps_cm:
+            print(f"Climbing to {step_cm} cm...")
+            climb_to(drone, step_cm)
+            current_cm = drone.get_height("cm")
+            print(f"  Now at approx {current_cm:.2f} cm. Hovering {HOVER_SECONDS}s.")
 
-        # At 91.44 cm (3 ft), fly the square pattern before continuing to climb
-        if abs(step_cm - SQUARE_AT_CM) < 0.01:
-            print("Reached 91.44 cm - flying square pattern (left, forward, right, backward)...")
-            fly_square(drone, SQUARE_SIDE_CM, MOVE_SPEED_MS, HOVER_SECONDS)
-            print("Square complete. Still at 91.44 cm. Resuming climb...")
+            # At 91.44 cm (3 ft), fly the square pattern before continuing to climb
+            if abs(step_cm - SQUARE_AT_CM) < 0.01:
+                print("Reached 91.44 cm - flying square pattern (left, forward, right, backward)...")
+                fly_square(drone, SQUARE_SIDE_CM, MOVE_SPEED_MS, HOVER_SECONDS)
+                print("Square complete. Still at 91.44 cm. Resuming climb...")
 
-    print("Reached final altitude (152.4 cm). Landing.")
-    drone.land()
-    drone.close()
+        print("Reached final altitude (152.4 cm).")
+    finally:
+        print("Landing.")
+        drone.land()
+        drone.close()
 
 
 if __name__ == "__main__":
