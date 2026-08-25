@@ -76,10 +76,6 @@ PSEUDOCODE
 
 KNOWN LIMITATIONS
 -------------------
-  - No try/finally: if an exception occurs mid-flight, the script
-    exits without landing the drone. Extend with try/finally calling
-    drone.land() + drone.close() before relying on this for longer
-    or unattended flights.
   - No bounds/obstacle checking - a large TARGET_GRID value will
     happily try to fly the drone into a wall if the room isn't big
     enough. Measure your space before choosing target coordinates.
@@ -98,6 +94,17 @@ KNOWN LIMITATIONS
 Usage:
     Edit TARGET_GRID below (or call fly_to_grid(drone, x, y) directly
     with your own coordinates) and run.
+
+NEW TO PYTHON? READ THIS FIRST
+---------------------------------
+If terms like "function," "docstring," "tuple," or "try/finally"
+below aren't familiar yet, see docs/python-concepts-guide.md in this
+repo before reading further. One thing in THIS file that guide
+doesn't fully prepare you for: move_axis_steps() below takes actual
+functions (like drone.move_forward) as arguments, not just numbers or
+text - this lets the same code handle both the X axis and the Y axis
+without writing near-duplicate code for each one. See that function's
+docstring for a plain-language explanation.
 """
 
 from codrone_edu.drone import *
@@ -126,6 +133,19 @@ def move_axis_steps(drone, num_grid_squares, forward_func, backward_func, speed_
     Move along a single axis in 15.24 cm increments, covering a given
     number of 30.48 cm grid squares.
 
+    IN PLAIN LANGUAGE: this one function handles BOTH the X axis
+    (forward/backward) and the Y axis (left/right), instead of
+    writing two nearly-identical functions. It does this by taking
+    the actual movement commands themselves as arguments -
+    forward_func and backward_func - rather than always calling
+    drone.move_forward()/drone.move_backward() by name inside the
+    function. When this function is used for the X axis, the caller
+    passes in drone.move_forward and drone.move_backward; when it's
+    used for the Y axis, the caller passes in drone.move_right and
+    drone.move_left instead. This is called "passing a function as an
+    argument" - it's a more advanced pattern than passing numbers or
+    text, but it's what avoids writing the same stepping logic twice.
+
     Pseudocode:
         total_steps = |num_grid_squares| * 2   # 2 moves of 15.24cm per grid square
         pick move_func = forward_func if num_grid_squares is positive,
@@ -134,7 +154,7 @@ def move_axis_steps(drone, num_grid_squares, forward_func, backward_func, speed_
             call move_func(15.24 cm, speed_ms)
             print progress for this step
 
-    Args:
+    Args (the information this function needs to run):
         drone: the connected Drone instance.
         num_grid_squares (int): signed number of grid squares to
             cover on this axis. Sign determines direction (which of
@@ -142,14 +162,16 @@ def move_axis_steps(drone, num_grid_squares, forward_func, backward_func, speed_
             determines distance.
         forward_func (callable): the drone method to call for the
             positive direction (e.g. drone.move_forward or
-            drone.move_right).
+            drone.move_right). "callable" just means "a function that
+            can be called" - it's being handed in as data, not run yet.
         backward_func (callable): the drone method to call for the
             negative direction (e.g. drone.move_backward or
             drone.move_left).
         speed_ms (float): speed in m/s for each individual move.
 
-    Returns:
-        None.
+    Returns (what comes back out of this function):
+        None - this function doesn't hand back a value, it just moves
+        the drone step by step and prints progress as it goes.
     """
     total_steps = abs(num_grid_squares) * STEPS_PER_GRID
     move_func = forward_func if num_grid_squares > 0 else backward_func
@@ -236,13 +258,21 @@ def main():
     takeoff, fly to TARGET_GRID using the X-then-Y taxicab path,
     hover, return to (0, 0) via the reverse path, hover, then land.
 
+    The flight logic runs inside a try/finally block: if anything
+    raises an exception mid-flight, the finally block still calls
+    drone.land() and drone.close() so the drone doesn't get left
+    airborne with no landing command issued.
+
     Pseudocode:
         create Drone object and pair
         take off, hover 5 seconds at (0, 0)
-        fly_to_grid(target_x, target_y)     # travel out, hover at target
-        return_to_start(target_x, target_y)  # travel back, hover at (0,0)
-        land
-        close the connection
+        try:
+            fly_to_grid(target_x, target_y)     # travel out, hover at target
+            return_to_start(target_x, target_y)  # travel back, hover at (0,0)
+        finally:
+            land
+            close the connection
+            (runs even if an exception occurred above)
     """
     drone = Drone()
     drone.pair()
@@ -252,13 +282,15 @@ def main():
     drone.hover(HOVER_SECONDS)
 
     target_x, target_y = TARGET_GRID
-    fly_to_grid(drone, target_x, target_y)
 
-    return_to_start(drone, target_x, target_y)
-
-    print("Flight plan complete. Landing.")
-    drone.land()
-    drone.close()
+    try:
+        fly_to_grid(drone, target_x, target_y)
+        return_to_start(drone, target_x, target_y)
+        print("Flight plan complete.")
+    finally:
+        print("Landing.")
+        drone.land()
+        drone.close()
 
 
 if __name__ == "__main__":

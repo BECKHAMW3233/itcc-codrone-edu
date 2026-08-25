@@ -86,10 +86,6 @@ PSEUDOCODE
 
 KNOWN LIMITATIONS
 -------------------
-  - No try/finally: if an exception occurs mid-flight, the script
-    exits without landing the drone. Extend with try/finally calling
-    drone.land() + drone.close() before relying on this for longer
-    or unattended flights.
   - Descending uses negative throttle (-CLIMB_THROTTLE). This is a
     reasonable assumption based on how throttle is generally
     documented, but has NOT been confirmed against the actual SDK
@@ -118,6 +114,16 @@ Usage:
     Edit TARGET_3D below (or call
     fly_to_3d_grid(drone, x, y, z) directly with your own
     coordinates) and run.
+
+NEW TO PYTHON? READ THIS FIRST
+---------------------------------
+If terms like "function," "docstring," "tuple," or "try/finally"
+below aren't familiar yet, see docs/python-concepts-guide.md in this
+repo first. This file builds on grid_flight_plan.py (same X/Y
+stepping logic) and adds a Z axis on top - if move_axis_steps() below
+is confusing, that function is explained more fully in
+grid_flight_plan.py's docstring, since it's the same function reused
+here.
 """
 
 from codrone_edu.drone import *
@@ -189,6 +195,20 @@ def climb_by_steps(drone, z_steps):
     Climb or descend by a number of 15.24 cm altitude steps, relative
     to the drone's CURRENT altitude (not an absolute height).
 
+    IN PLAIN LANGUAGE: this is the same "throttle up, check the
+    height sensor, stop when close enough" idea as climb_to() in
+    altitude_square_demo.py, but this version can also go DOWN, not
+    just up. The sign of z_steps decides the direction: a positive
+    number (like 3) means climb, a negative number (like -3) means
+    descend. This function uses POSITIVE throttle to climb and
+    NEGATIVE throttle to descend - think of it like a video game
+    control stick that goes up when pushed one way and down when
+    pushed the other way. The loop condition
+    (`while (climbing and ...) or (not climbing and ...)`) looks
+    complicated, but it's really just "keep going until we're close
+    enough to the target" checked in whichever direction we're
+    actually moving.
+
     Pseudocode:
         if z_steps is 0: do nothing, return
 
@@ -206,13 +226,14 @@ def climb_by_steps(drone, z_steps):
             small sleep between checks
         set throttle back to 0, call move() once to apply it
 
-    Args:
+    Args (the information this function needs to run):
         drone: the connected Drone instance.
         z_steps (int): signed number of 15.24 cm altitude steps.
             Positive climbs, negative descends, 0 does nothing.
 
-    Returns:
-        None. Leaves the drone hovering at approximately
+    Returns (what comes back out of this function):
+        None - this function doesn't hand back a value, it just moves
+        the drone up or down and leaves it hovering at approximately
         start_altitude + (z_steps * 15.24cm), within CLIMB_TOLERANCE_CM.
     """
     if z_steps == 0:
@@ -356,15 +377,26 @@ def main():
     takeoff, climb + fly to TARGET_3D, hover, reverse the trip back
     to (0, 0, 0), hover, then land.
 
+    The flight logic runs inside a try/finally block: if anything
+    raises an exception mid-flight (including during the climb or
+    descent), the finally block still calls drone.land() and
+    drone.close() so the drone doesn't get left airborne with no
+    landing command issued - this matters especially here since the
+    throttle-based climb/descent logic is the least-tested part of
+    this script (see KNOWN LIMITATIONS above).
+
     Pseudocode:
         create Drone object and pair
         take off, hover 5 seconds at (0, 0, 0)
-        fly_to_3d_grid(target_x, target_y, target_z)
-            # climbs first, then moves horizontally, hovers at target
-        return_to_start(target_x, target_y, target_z)
-            # moves horizontally back, then descends, hovers at (0,0,0)
-        land
-        close the connection
+        try:
+            fly_to_3d_grid(target_x, target_y, target_z)
+                # climbs first, then moves horizontally, hovers at target
+            return_to_start(target_x, target_y, target_z)
+                # moves horizontally back, then descends, hovers at (0,0,0)
+        finally:
+            land
+            close the connection
+            (runs even if an exception occurred above)
     """
     drone = Drone()
     drone.pair()
@@ -374,13 +406,15 @@ def main():
     drone.hover(HOVER_SECONDS)
 
     target_x, target_y, target_z = TARGET_3D
-    fly_to_3d_grid(drone, target_x, target_y, target_z)
 
-    return_to_start(drone, target_x, target_y, target_z)
-
-    print("Flight plan complete. Landing.")
-    drone.land()
-    drone.close()
+    try:
+        fly_to_3d_grid(drone, target_x, target_y, target_z)
+        return_to_start(drone, target_x, target_y, target_z)
+        print("Flight plan complete.")
+    finally:
+        print("Landing.")
+        drone.land()
+        drone.close()
 
 
 if __name__ == "__main__":
