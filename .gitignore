@@ -1,3 +1,13 @@
+# WHAT THIS FILE DOES:
+# Git normally tracks every file in this folder. This file tells Git
+# to IGNORE certain files/folders entirely - they'll never be staged,
+# committed, or pushed, even with "git add ." You don't need to do
+# anything with this file day-to-day; it works automatically in the
+# background. The categories below are junk that gets regenerated
+# automatically on every machine (cached Python bytecode, virtual
+# environments, editor config, OS clutter) - none of it belongs in
+# the shared repo since it's either huge, machine-specific, or both.
+
 # Python
 __pycache__/
 *.pyc
