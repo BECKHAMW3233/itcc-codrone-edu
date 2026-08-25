@@ -1,1 +1,8 @@
+# WHAT THIS FILE DOES:
+# `pip install -r requirements.txt` reads this list and installs each
+# package. There's currently one dependency: `codrone-edu`, the
+# official Python SDK for the CoDrone EDU drone (installing it also
+# pulls in a few packages it depends on, like pyserial). If a future
+# mission needs another package, add its name on its own line here.
+
 codrone-edu
