@@ -5,6 +5,36 @@ Verified against the official Robolink documentation
 scripts. This is a starting cheat sheet, not the full API — see the
 official docs for anything not covered here.
 
+**New to Python?** This page is a fast lookup table, not a tutorial —
+it assumes you already know how to call a function. If terms like
+"function," "argument," or "keyword argument" aren't familiar yet,
+read [`docs/python-concepts-guide.md`](python-concepts-guide.md)
+first, then come back here.
+
+**How to read the code blocks below:** a line like
+`drone.move_forward(distance, units="cm", speed=1)` is a **function
+call**. `distance` is a plain argument — you must supply a value, in
+that position. `units="cm"` and `speed=1` are **keyword arguments** —
+each one is tied to a specific name so it's clear what it means, and
+each already shows its default value here, so you only need to type
+your own value for the ones you actually want to change (e.g.
+`drone.move_forward(30, units="cm")` is a valid call that just uses
+the default `speed=1`).
+
+**A few physical terms used throughout** (these are drone/hardware
+concepts, not programming ones):
+- **throttle** — raw upward/downward power, given as a percentage.
+  Think of it like a bicycle pedal: more throttle, faster climb.
+  There's no built-in "go to exactly this height" command — climbing
+  means turning throttle on and checking the height sensor over and
+  over until you're close enough (see *Altitude / throttle* below).
+- **heading** — which direction the drone is facing, in degrees, like
+  a compass.
+- **optical flow sensor** — a downward-facing camera the drone uses to
+  track how far it has physically moved. It needs a well-lit,
+  patterned surface underneath to track accurately - a plain or
+  reflective floor can throw off distance-based moves.
+
 ## Setup
 
 ```python

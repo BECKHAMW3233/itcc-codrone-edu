@@ -4,6 +4,20 @@ This project is a shared space for ITCC members to design and submit
 their own CoDrone EDU flight missions. Follow these guidelines so
 everyone's code is easy to read, run, and build on.
 
+**New to Git, GitHub, or Python?** This guide assumes you can already
+clone the repo, create a branch, and open a pull request — if any of
+that isn't familiar yet, read
+[`docs/getting-access-and-setup.md`](docs/getting-access-and-setup.md)
+first, it walks through all of it step by step (including what a
+terminal even is). If typing Git commands isn't something you want to
+learn right now, [`docs/using-claude-code.md`](docs/using-claude-code.md)
+covers doing all of this — branching, committing, opening the pull
+request — by describing what you want in plain English instead. If a
+term like "docstring" below is new, see
+[`docs/python-concepts-guide.md`](docs/python-concepts-guide.md) — it
+covers the Python patterns used across this repo in plain language,
+starting from the absolute basics if needed.
+
 ## Before you start
 
 1. Make sure you have `codrone-edu` installed and can run the example
@@ -18,8 +32,11 @@ everyone's code is easy to read, run, and build on.
 
 ## Submitting a mission
 
-1. **Branch or fork** — create a branch named after your mission, e.g.
-   `yourname-perimeter-scan` or `yourname-figure-eight`.
+1. **Create a branch** named after your mission, e.g.
+   `yourname-perimeter-scan` or `yourname-figure-eight`. This repo
+   uses direct branches, not forks — you don't need your own copy of
+   the repo, just your own branch inside this one (see
+   `docs/getting-access-and-setup.md` if branches are a new concept).
 2. **Add your script to `missions/`** with a clear, descriptive
    filename (e.g. `perimeter_scan_jdoe.py`, not `test1.py` or
    `drone_script.py`).
@@ -31,8 +48,12 @@ everyone's code is easy to read, run, and build on.
    - Whether it lands at the takeoff point or a different location
 4. **Use configuration variables**, not magic numbers, wherever
    reasonable — see `altitude_square_demo.py` for the pattern (e.g.
-   `HOVER_SECONDS`, `STEP_IN` defined near the top, not buried in
-   function calls).
+   `HOVER_SECONDS`, `STEP_CM` defined near the top, not buried in
+   function calls). ("Magic number" means a value typed directly into
+   your code with no explanation, like `time.sleep(5)` — a reader has
+   no way to know why it's 5, or whether that same 5 matters
+   elsewhere. A named variable like `HOVER_SECONDS = 5` at the top of
+   the file fixes that.)
 5. **Test incrementally.** Get takeoff/land working first, then add
    one movement at a time. Don't write the whole mission blind and
    test it all at once.

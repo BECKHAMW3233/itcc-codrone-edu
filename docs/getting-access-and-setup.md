@@ -100,18 +100,51 @@ need to fork the repo.
 - If you're planning to test-fly a mission: a CoDrone EDU + USB
   Bluetooth dongle, physically with you
 
+**Never typed a Git command before?** That's expected — CTI-110 and
+most intro IT coursework don't cover this. Everything below still
+works, it'll just be new. If typing commands feels intimidating, you
+can skip straight to
+[`using-claude-code.md`](using-claude-code.md) instead, which lets
+you do all of this (clone, branch, commit, push) by describing what
+you want in plain English rather than memorizing commands. This
+section is still worth skimming even then, since it explains what's
+actually happening underneath.
+
+### What's a terminal, and how do I open one?
+
+A **terminal** (also called a command line or, on Windows, a
+"console") is a plain text window where you type commands instead of
+clicking buttons — it's how `git` commands actually get run. You
+don't need to be comfortable with it beyond copy-pasting the commands
+in this guide.
+
+- **Windows:** Installing Git (above) also installs **Git Bash**.
+  Open the folder where you want the repo in File Explorer,
+  right-click inside it, and choose **"Git Bash Here"** — or search
+  "Git Bash" in the Start menu. Either way, a terminal window opens
+  and you can type the commands below into it.
+- **Mac:** Press `Cmd + Space`, type `Terminal`, and press Enter. This
+  opens a terminal you can `cd` into your project folder from (see
+  the `cd` command below), or type the commands directly.
+
+Every gray code box in this guide is something you type into that
+window, one line at a time, pressing Enter after each line.
+
 ### Cloning the repo
 
-Open a terminal and run:
+In your terminal, run:
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/itcc-codrone-edu.git
+git clone https://github.com/BECKHAMW3233/itcc-codrone-edu.git
 cd itcc-codrone-edu
 ```
 
-Replace `YOUR-USERNAME` with the actual GitHub username/org that
-owns the repo — get the exact URL from the green "Code" button on
-the repo's GitHub page.
+The first line downloads a full copy of the repo (with its entire
+history) into a new `itcc-codrone-edu` folder wherever your terminal
+is currently pointed. The second line (`cd`, short for "change
+directory") moves your terminal *into* that new folder, so the
+commands you run next apply to the repo instead of wherever you
+started.
 
 ### Installing dependencies
 
@@ -137,6 +170,28 @@ and nearby):
 ```bash
 python missions/altitude_square_demo.py
 ```
+
+### What do I actually edit `.py` files with?
+
+Any plain text editor technically works — Notepad on Windows, or
+TextEdit in plain-text mode on Mac. In practice, a free **code
+editor** makes this much easier and is worth installing:
+
+- **VS Code** ([code.visualstudio.com](https://code.visualstudio.com))
+  — free, works on Windows/Mac/Linux, color-highlights Python so
+  mistakes stand out, and has a built-in terminal so you can edit and
+  run a script from the same window.
+
+To make a change: open the `.py` file in your editor, find the
+variable you want to change (e.g. `TARGET_GRID = (10, -6)` near the
+top of `grid_flight_plan.py` — every mission script's editable values
+live in a `# ---- Configuration ----` section near the top), edit the
+value, save the file (`Ctrl+S` / `Cmd+S`), then run it again from your
+terminal the same way you did above.
+
+If you'd rather not touch an editor directly, see
+[`using-claude-code.md`](using-claude-code.md) — you describe the
+change you want in plain English and it edits the file for you.
 
 ### Making your own changes: branch, don't push to main
 
@@ -199,7 +254,7 @@ Do this regularly, especially before starting a new branch.
 
 | Task | Command |
 |---|---|
-| Clone the repo | `git clone <repo-url>` |
+| Clone the repo | `git clone https://github.com/BECKHAMW3233/itcc-codrone-edu.git` |
 | Install dependencies | `pip install -r requirements.txt` |
 | Update your local `main` | `git checkout main && git pull` |
 | Start a new branch | `git checkout -b yourname-mission-name` |

@@ -74,6 +74,12 @@ KNOWN LIMITATIONS
     2.0 m/s (200 cm/sec) - values above that will likely be clamped
     or rejected by the drone firmware.
 
+Usage:
+    Edit the configuration values below (STEP_CM, TARGET_CM,
+    SQUARE_AT_CM, SQUARE_SIDE_CM, HOVER_SECONDS, CLIMB_THROTTLE,
+    MOVE_SPEED_CM_PER_SEC) to match your space and drone, then run:
+        python missions/altitude_square_demo.py
+
 NEW TO PYTHON? READ THIS FIRST
 ---------------------------------
 If terms like "function," "docstring," "tuple," or "try/finally"

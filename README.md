@@ -39,12 +39,14 @@ themselves.
 ## Repo layout
 
 ```
-itcc-codrone-repo/
+itcc-codrone-edu/
 ├── README.md                    - this file
 ├── CONTRIBUTING.md              - how to submit a mission
 ├── requirements.txt             - Python package dependencies
 ├── .github/workflows/            - CI: automated syntax check on push/PR
 │   └── syntax-check.yml
+├── codrone-edu-resources/       - links to Robolink's official manual, API docs, and specs
+│   └── README.md
 ├── missions/                    - individual member flight-path scripts
 │   ├── altitude_square_demo.py     - staged altitude climb (cm) + square pattern
 │   ├── grid_flight_plan.py         - 2D grid navigation (X/Y, cm-based)
@@ -55,7 +57,8 @@ itcc-codrone-repo/
 └── docs/                        - reference notes, SDK function summaries, etc.
     ├── getting-access-and-setup.md - how to get repo access + set up locally
     ├── python-concepts-guide.md    - plain-language Python concepts used in missions/
-    └── sdk-quick-reference.md      - CoDrone EDU Python SDK cheat sheet
+    ├── sdk-quick-reference.md      - CoDrone EDU Python SDK cheat sheet
+    └── using-claude-code.md        - optional: using Claude Code to edit files and manage Git here
 ```
 
 This is a starting skeleton. As the club adds more missions, we'll
@@ -119,6 +122,18 @@ module docstring for a specific list of known limitations.
 - `sdk-quick-reference.md` — a cheat sheet of commonly used CoDrone
   EDU Python SDK functions (takeoff/land, movement, altitude,
   sensors), verified against Robolink's official documentation.
+- `using-claude-code.md` — optional guide for members who want to use
+  the Claude Code AI assistant to edit files and handle Git
+  (clone/pull/push) in this repo, written for someone who has never
+  opened Claude Code before.
+
+**Official resources** (`codrone-edu-resources/`):
+
+- Links to Robolink's own CoDrone EDU user manual, Python API
+  documentation, technical specs, and support — see
+  [`codrone-edu-resources/README.md`](codrone-edu-resources/README.md).
+  These are Robolink's materials, linked rather than copied into this
+  repo.
 
 **CI** (`.github/workflows/syntax-check.yml`):
 
