@@ -1,0 +1,11 @@
+WHAT THIS FILE IS FOR:
+Git does not track empty folders - if the scripts/ folder had no
+files in it at all, Git would silently drop it, and a fresh clone of
+this repo wouldn't even have a scripts/ folder to put files into.
+This file exists purely to give the folder something to track, so it
+survives being cloned even before anyone adds a real script to it.
+
+You can safely ignore this file. It's not code, it's not imported by
+anything, and it doesn't need editing. If scripts/ ever ends up with
+real files in it (it already has converter.py as of this writing),
+this file becomes unnecessary but is harmless to leave in place.
