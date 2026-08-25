@@ -8,6 +8,47 @@ you're set up, see `CONTRIBUTING.md`.
 
 ---
 
+## Why this is worth learning properly, not just following along
+
+The mechanics below — cloning, branching, committing, pull requests —
+aren't just steps to get through so you can fly a drone. Git and
+GitHub are the actual, industry-standard way that professional
+software and cybersecurity teams manage code, track changes, and
+collaborate, whether you end up writing code day-to-day or not.
+
+A few concrete reasons this matters beyond this club project:
+
+- **Version control is a real job skill.** Almost every technical
+  role — developer, sysadmin, security analyst, DevOps, IT support —
+  touches Git in some form. Knowing how to clone a repo, work on a
+  branch, and open a pull request without help is a baseline
+  expectation, not a specialized skill.
+- **This workflow mirrors how real teams operate.** Branch protection,
+  required reviews, and automated checks (like the syntax check this
+  repo runs on every pull request) exist here for the same reasons
+  they exist at a real company: to catch mistakes before they reach
+  everyone else's code, and to make sure more than one person looks
+  at a change before it ships.
+- **A GitHub profile is a portfolio.** A federal hiring manager,
+  internship coordinator, or interviewer can look at your GitHub
+  account and see real, dated evidence of work — commits, pull
+  requests, code you wrote and got reviewed. That's harder evidence
+  of ability than a bullet point on a resume, and it costs nothing
+  extra to build if you're already doing the work here properly.
+- **Mistakes here are cheap; mistakes on the job aren't.** This is a
+  low-stakes place to get comfortable with things like "I pushed to
+  the wrong branch" or "my pull request failed a check" — better to
+  work through that confusion on a club project than for the first
+  time on a paid job.
+
+None of this requires being an expert going in. It requires actually
+doing the steps below yourself — cloning, branching, committing,
+opening pull requests — rather than having someone else do it for
+you, so the muscle memory is real by the time it matters somewhere
+else.
+
+---
+
 ## Part 1: Getting repo access
 
 This repo uses **direct collaborator access** — once you're added,
