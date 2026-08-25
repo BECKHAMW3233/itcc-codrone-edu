@@ -1,18 +1,45 @@
 # Python Concepts Used in This Repo
 
 This is a plain-language explainer for the Python patterns that show
-up repeatedly in `missions/` and `scripts/`. It's written for someone
-who has taken a basic/intro Python course — knows variables, if
-statements, and simple loops — but hasn't necessarily seen functions
-with lots of arguments, tuples, or error handling yet. Each mission
-script links back to this doc instead of re-explaining these ideas
-every time.
+up repeatedly in `missions/` and `scripts/`. It does **not** assume
+you've taken a full programming course — CTI-110 (IT Foundations) or
+similar is plenty, even though that course only touches programming
+as one topic among several (AI, databases, web dev). If you already
+know what variables, if statements, and loops are, skip ahead to
+section 1. If any of that is still new, section 0 covers it first.
+Each mission script links back to this doc instead of re-explaining
+these ideas every time.
 
 If a concept below still doesn't make sense after reading it, ask in
 the club — that's normal, not a sign you're behind. These are things
 that take a few real examples to click.
 
 ---
+
+## 0. If you've never written any code before
+
+Everything from section 1 onward assumes you know what a **variable**,
+an **if statement**, and a **loop** are. Here's the fast version:
+
+- A **variable** is a named box that holds a value.
+  `altitude = 50` creates a variable called `altitude` holding the
+  number `50` — you can use `altitude` later in the code instead of
+  retyping `50` everywhere.
+- An **if statement** runs a piece of code only when something is
+  true. `if altitude > 100: land()` means "only call `land()` if
+  `altitude` is actually bigger than 100 at that point in the code."
+- A **loop** repeats the same code multiple times instead of you
+  typing it out over and over by hand — section 5 below covers the
+  specific kind used in this repo.
+
+If none of that clicked yet, that's completely normal — CTI-110 is a
+broad IT survey course, not a hands-on programming class, so this may
+be close to your first real exposure to any of it. A free 30-60
+minute walkthrough like
+[Python's official beginner's guide](https://www.python.org/about/gettingstarted/)
+will make the rest of this document click faster. Otherwise, keep
+reading — section 9 at the end still gives you a concrete, step-by-step
+plan for approaching a real script even while some of this still feels new.
 
 ## 1. What a function actually is
 
