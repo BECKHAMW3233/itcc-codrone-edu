@@ -179,6 +179,17 @@ a human still has to test-fly it cautiously, per the safety notes in
 > show you each step and wait for your approval before pushing
 > anything to GitHub.
 
+## Using it from a browser instead (no install at all)
+
+Everything above assumes Claude Code is installed somewhere (desktop
+app, terminal, or IDE). There's also a version that runs entirely in
+a browser, connected straight to your GitHub account, with nothing to
+install — see
+[`using-claude-code-online.md`](using-claude-code-online.md) in this
+same folder. The one thing it can't do is anything requiring the
+physical drone, since it runs in the cloud, not on a machine next to
+your hardware.
+
 ## Where to learn more
 
 - Official quickstart: https://docs.claude.com/en/docs/claude-code/quickstart
