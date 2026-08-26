@@ -58,7 +58,8 @@ itcc-codrone-edu/
     ├── getting-access-and-setup.md - how to get repo access + set up locally
     ├── python-concepts-guide.md    - plain-language Python concepts used in missions/
     ├── sdk-quick-reference.md      - CoDrone EDU Python SDK cheat sheet
-    └── using-claude-code.md        - optional: using Claude Code to edit files and manage Git here
+    ├── using-claude-code.md        - optional: using Claude Code locally to edit files and manage Git here
+    └── using-claude-code-online.md - optional: using Claude Code online (claude.ai/code) with this repo's GitHub
 ```
 
 This is a starting skeleton. As the club adds more missions, we'll
@@ -126,6 +127,11 @@ module docstring for a specific list of known limitations.
   the Claude Code AI assistant to edit files and handle Git
   (clone/pull/push) in this repo, written for someone who has never
   opened Claude Code before.
+- `using-claude-code-online.md` — companion guide for the browser-only
+  version of Claude Code (claude.ai/code), connected directly to
+  GitHub with nothing installed locally. Can't test-fly the drone
+  (no local hardware access) but covers everything else, including
+  opening pull requests from a phone.
 
 **Official resources** (`codrone-edu-resources/`):
 
